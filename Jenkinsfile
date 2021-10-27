@@ -68,7 +68,17 @@ pipeline{
                 }
             }
         }
-        
+        stage("Copying the playbook and kubernetes manifests to Ansible server"){
+		    steps{
+			    script{
+				    echo "${WORKSPACE}"
+					        sh '''
+							     sudo scp -o StrictHostKeyChecking=no -i /root/.ssh/id_rsa /root/.jenkins/workspace/sample_application_for_cicd/kubernetes/manifests-yamls/ root@172.31.85.166:/etc/ansible/kubernetes/
+							'''     
+				}
+            }
+        }			
+							
         stage('manual approval'){
             steps{
                 script{
@@ -80,18 +90,21 @@ pipeline{
             }
         }
 
-        stage('Deploying application on k8s cluster') {
+        stage('Deploying application on k8s cluster using ansible-playbook') {
             steps {
                script{
-                   withCredentials([kubeconfigFile(credentialsId: 'kubernetes-configs', variable: 'KUBECONFIG')]) {
-                        dir('kubernetes/') {
-                          sh 'helm upgrade --install --set image.repository="3.220.243.252:8083/springapp" --set image.tag="${VERSION}" myjavaapp myapp/ ' 
-                        }
-                    }
+			        sh ''' 
+                         ssh -o StrictHostKeyChecking=no -i /root/.ssh/id_rsa root@172.31.85.166 
+						 su - ansadmin 
+						 aws eks --profile eks-user --region us-east-1 update-kubeconfig --name eks-demo-cluster 
+						 /opt/kubectl config use-context arn:aws:eks:us-east-1:467418937495:cluster/eks-demo-cluster
+						 ansible-playbook -i /etc/ansible/inventory/hosts /etc/ansible/kubernetes/playbook-deployment-service.yaml
+						 sudo rm -rf /etc/ansible/kubernetes/*.yaml
+                    '''     
                }
             }
         }
-
+        
         stage('verifying app deployment'){
             steps{
                 script{
