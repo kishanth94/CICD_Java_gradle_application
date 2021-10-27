@@ -73,7 +73,7 @@ pipeline{
 			    script{
 				    echo "${WORKSPACE}"
 					        sh '''
-							     sudo scp -o StrictHostKeyChecking=no -i /root/.ssh/id_rsa /root/.jenkins/workspace/sample_application_for_cicd/kubernetes/manifests-yamls/ root@172.31.85.166:/etc/ansible/kubernetes/
+							     sudo scp -o StrictHostKeyChecking=no -i /root/.ssh/id_rsa ${WORKSPACE}/kubernetes/manifests-yamls/*.yaml root@172.31.85.166:/etc/ansible/kubernetes/
 							'''     
 				}
             }
