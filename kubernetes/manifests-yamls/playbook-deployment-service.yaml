@@ -4,10 +4,10 @@
   
   tasks: 
   - name: create a deployment
-    command: /opt/kubectl apply -f deployment.yaml
+    command: /opt/kubectl apply -f /etc/ansible/kubernetes/deployment.yaml
     
   - name: create a service
-    command: /opt/kubectl apply -f service.yaml
+    command: /opt/kubectl apply -f /etc/ansible/kubernetes/service.yaml
     
   - name: update deployment with new pods if image updated in Nexus
     command: /opt/kubectl rollout restart deployment.v1.apps/sample-tomcat-deployment
