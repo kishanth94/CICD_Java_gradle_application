@@ -1,0 +1,13 @@
+---
+- name: Create pods using deployment and expose the service for the application
+  hosts: kubernetes-workers
+  
+  tasks: 
+  - name: create a deployment
+    command: /opt/kubectl apply -f deployment.yaml
+    
+  - name: create a service
+    command: /opt/kubectl apply -f service.yaml
+    
+  - name: update deployment with new pods if image updated in Nexus
+    command: /opt/kubectl rollout restart deployment.v1.apps/sample-tomcat-deployment
