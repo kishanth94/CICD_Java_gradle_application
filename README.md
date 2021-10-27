@@ -1,4 +1,4 @@
-# CICD_Java_gradle_application
+# CICD_Sample_Java_gradle_application
 
 This application is based on java springboot web application  
 
