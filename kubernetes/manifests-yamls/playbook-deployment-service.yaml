@@ -12,8 +12,4 @@
     
   - name: create a service
     shell: |
-      kubectl --kubeconfig=/root/.kube/config apply -f /etc/ansible/kubernetes/service.yaml
-    
-  - name: update deployment with new pods if image updated in Nexus
-    shell: |
-      kubectl --kubeconfig=/root/.kube/config rollout restart deployment.v1.apps/sample-tomcat-deployment
+      kubectl --kubeconfig=/root/.kube/config apply -f /etc/ansible/kubernetes/service.yamlFixed
