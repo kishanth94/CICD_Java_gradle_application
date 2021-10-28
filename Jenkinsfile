@@ -77,7 +77,7 @@ pipeline{
 				    echo "${WORKSPACE}"
 					echo "${DOCKER_TAG}"
 					        sh '''
-								 sudo grep -irl {DOCKER_TAG} ${WORKSPACE}/kubernetes/manifests-yamls/deployment.yaml | xargs sed -i 's/{DOCKER_TAG}/${DOCKER_TAG}/g'"
+								 sudo grep -irl {DOCKER_TAG} ${WORKSPACE}/kubernetes/manifests-yamls/deployment.yaml | xargs sed -i 's/{DOCKER_TAG}/${DOCKER_TAG}/g'
 								 sudo scp -o StrictHostKeyChecking=no -i /root/.ssh/id_rsa ${WORKSPACE}/kubernetes/manifests-yamls/*.yaml root@172.31.85.166:/etc/ansible/kubernetes/
 							'''     
 				}
