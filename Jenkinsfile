@@ -1,7 +1,9 @@
 pipeline{
     agent any
     environment{
-        VERSION = "${env.BUILD_ID}"
+	    ENVIRONMENT = 'TEST'
+	    TIME_STAMP = new java.text.SimpleDateFormat('yyyy_MM_dd').format(new Date())
+        DOCKER_TAG = "${ENVIRONMENT}_${TIME_STAMP}_${env.BUILD_NUMBER}"
     }
     stages{
         stage("sonar quality check"){
@@ -32,20 +34,13 @@ pipeline{
                 script{
                     withCredentials([string(credentialsId: 'nexus_pass', variable: 'nexus_password')]) {
                              sh '''
-                                docker build -t 3.220.243.252:8083/springapp:${VERSION} .
+                                docker build -t 3.220.243.252:8083/springapp:${DOCKER_TAG} .
                                 docker login -u admin -p $nexus_password 3.220.243.252:8083
-                                docker push 3.220.243.252:8083/springapp:${VERSION}
+                                docker push 3.220.243.252:8083/springapp:${DOCKER_TAG}
+								docker rmi 3.220.243.252:8083/springapp:${DOCKER_TAG}
 								docker logout
                             '''
 				    }
-				    withDockerRegistry(credentialsId: 'DOCKERHUB', url: 'https://registry.hub.docker.com') {
-					         sh '''
-								docker tag 3.220.243.252:8083/springapp:${VERSION} kishanth1994/springapp:${VERSION}
-								docker push kishanth1994/springapp:${VERSION}
-								docker rmi 3.220.243.252:8083/springapp:${VERSION}
-								docker rmi kishanth1994/springapp:${VERSION}
-							'''
-                    }
                 }
             }
         }
@@ -80,8 +75,10 @@ pipeline{
 		    steps{
 			    script{
 				    echo "${WORKSPACE}"
+					echo "${DOCKER_TAG}"
 					        sh '''
-							     sudo scp -o StrictHostKeyChecking=no -i /root/.ssh/id_rsa ${WORKSPACE}/kubernetes/manifests-yamls/*.yaml root@172.31.85.166:/etc/ansible/kubernetes/
+								 sudo grep -irl {DOCKER_TAG} ${WORKSPACE}/kubernetes/manifests-yamls/deployment.yaml | xargs sed -i 's/{DOCKER_TAG}/${DOCKER_TAG}/g'"
+								 sudo scp -o StrictHostKeyChecking=no -i /root/.ssh/id_rsa ${WORKSPACE}/kubernetes/manifests-yamls/*.yaml root@172.31.85.166:/etc/ansible/kubernetes/
 							'''     
 				}
             }

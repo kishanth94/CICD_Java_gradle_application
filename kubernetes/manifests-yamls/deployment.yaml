@@ -20,9 +20,11 @@ spec:
       labels:
         app: sample-tomcat-application
     spec:
+      imagePullSecrets:
+        - name: registry-secret
       containers:
-        - name: sample-tomcat-application
-          image: kishanth1994/springapp
+        - name: sample-tomcat-application:${DOCKER_TAG}
+          image: 3.220.243.252:8083/springapp
           command: ["/bin/sh"]
           args: ["-c","sh /usr/local/tomcat/bin/startup.sh;while true; do echo hello; sleep 10;done"]
           imagePullPolicy: Always
@@ -55,4 +57,3 @@ spec:
             limits:
               memory: "300Mi"
               cpu: "450m"
-
