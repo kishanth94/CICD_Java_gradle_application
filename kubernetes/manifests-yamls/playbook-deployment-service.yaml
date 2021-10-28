@@ -1,6 +1,6 @@
 ---
 - name: Create pods using deployment and expose the service for the application
-  hosts: workers
+  hosts: localhost
   
   collections:
   - community.kubernetes
@@ -8,12 +8,12 @@
   tasks: 
   - name: create a deployment
     shell: |
-      /opt/kubectl apply -f /etc/ansible/kubernetes/deployment.yaml
+      kubectl --kubeconfig=/root/.kube/config apply -f /etc/ansible/kubernetes/deployment.yaml
     
   - name: create a service
     shell: |
-      /opt/kubectl apply -f /etc/ansible/kubernetes/service.yaml
+      kubectl --kubeconfig=/root/.kube/config apply -f /etc/ansible/kubernetes/service.yaml
     
   - name: update deployment with new pods if image updated in Nexus
     shell: |
-      /opt/kubectl rollout restart deployment.v1.apps/sample-tomcat-deployment
+      kubectl --kubeconfig=/root/.kube/config rollout restart deployment.v1.apps/sample-tomcat-deployment

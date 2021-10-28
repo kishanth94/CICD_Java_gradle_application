@@ -20,11 +20,9 @@ spec:
       labels:
         app: sample-tomcat-application
     spec:
-      imagePullSecrets:
-        - name: registry-secret
       containers:
         - name: sample-tomcat-application
-          image: 3.220.243.252:8083/springapp
+          image: kishanth1994/springapp
           command: ["/bin/sh"]
           args: ["-c","sh /usr/local/tomcat/bin/startup.sh;while true; do echo hello; sleep 10;done"]
           imagePullPolicy: Always
