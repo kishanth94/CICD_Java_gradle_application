@@ -37,6 +37,7 @@ pipeline{
                                 docker push 3.220.243.252:8083/springapp:${VERSION}
 								docker logout
                             '''
+				    }
 				    withCredentials([string(credentialsId: 'dockerhub_pass', variable: 'dockerhub_password')]) {
 					         sh '''
 							    docker tag 3.220.243.252:8083/springapp:${VERSION} kishanth1994/springapp:${VERSION}
