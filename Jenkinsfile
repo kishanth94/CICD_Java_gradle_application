@@ -37,10 +37,19 @@ pipeline{
                                 docker build -t 3.220.243.252:8083/springapp:${DOCKER_TAG} .
                                 docker login -u admin -p $nexus_password 3.220.243.252:8083
                                 docker push 3.220.243.252:8083/springapp:${DOCKER_TAG}
-								docker rmi 3.220.243.252:8083/springapp:${DOCKER_TAG}
 								docker logout
                             '''
 				    }
+					withDockerRegistry(credentialsId: 'DOCKERHUB', url: 'https://hub.docker.com') {
+                             sh '''
+                                docker login -u kishanth1994 -p $DOCKERHUB
+								docker tag 3.220.243.252:8083/springapp:${DOCKER_TAG} kishanth1994/springapp:${DOCKER_TAG}
+                                docker push kishanth1994/springapp:${DOCKER_TAG}
+								docker rmi 3.220.243.252:8083/springapp:${DOCKER_TAG}
+								docker rmi kishanth1994/springapp:${DOCKER_TAG}
+								docker logout
+                            '''
+                    }
                 }
             }
         }
@@ -77,7 +86,7 @@ pipeline{
 				    echo "${WORKSPACE}"
 					echo "${DOCKER_TAG}"
 					        sh '''
-								 sudo grep -irl {DOCKER_TAG} ${WORKSPACE}/kubernetes/manifests-yamls/deployment.yaml | xargs sed -i 's/{DOCKER_TAG}/${DOCKER_TAG}/g'
+								 sudo grep -irl {DOCKER_TAG} ${WORKSPACE}/kubernetes/manifests-yamls/deployment.yaml | xargs sed -i "s/{DOCKER_TAG}/${DOCKER_TAG}/g"
 								 sudo scp -o StrictHostKeyChecking=no -i /root/.ssh/id_rsa ${WORKSPACE}/kubernetes/manifests-yamls/*.yaml root@172.31.85.166:/etc/ansible/kubernetes/
 							'''     
 				}
