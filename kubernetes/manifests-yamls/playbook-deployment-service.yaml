@@ -12,4 +12,4 @@
     
   - name: create a service
     shell: |
-      kubectl --kubeconfig=/root/.kube/config apply -f /etc/ansible/kubernetes/service.yamlFixed
+      kubectl --kubeconfig=/root/.kube/config apply -f /etc/ansible/kubernetes/service.yaml
