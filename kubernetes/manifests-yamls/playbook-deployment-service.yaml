@@ -1,6 +1,6 @@
 ---
 - name: Create pods using deployment and expose the service for the application
-  hosts: kubernetes-workers
+  hosts: workers
   
   collections:
   - community.kubernetes

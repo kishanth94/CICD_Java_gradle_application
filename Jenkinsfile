@@ -90,10 +90,10 @@ pipeline{
             }
         }
 
-        stage('Deploying application on k8s cluster using ansible-playbook') {
+        stage('Deploying application on k8s cluster from ansible-server using playbook') {
             steps {
                script{
-			        sh 'ssh -o StrictHostKeyChecking=no -i /root/.ssh/id_rsa root@172.31.85.166 "su - ansadmin; aws eks --profile eks-user --region us-east-1 update-kubeconfig --name eks-demo-cluster; /opt/kubectl config use-context arn:aws:eks:us-east-1:467418937495:cluster/eks-demo-cluster; ansible-playbook -i /etc/ansible/inventory/hosts /etc/ansible/kubernetes/playbook-deployment-service.yaml; sudo rm -rf /etc/ansible/kubernetes/*.yaml;"'   
+			        sh 'ssh -o StrictHostKeyChecking=no -i /root/.ssh/id_rsa root@172.31.85.166 "kubectl config get-contexts; kubectl config use-context kubernetes-admin@kubernetes; whoami && hostname; ansible-playbook -i /etc/ansible/kubernetes/hosts /etc/ansible/kubernetes/playbook-deployment-service.yaml; sudo rm -rf /etc/ansible/kubernetes/*.yaml;"'   
                }
             }
         }
