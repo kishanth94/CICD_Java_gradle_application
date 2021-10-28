@@ -42,12 +42,10 @@ pipeline{
 				    }
 					withDockerRegistry(credentialsId: 'DOCKERHUB', url: 'https://hub.docker.com') {
                              sh '''
-                                docker login -u kishanth1994 -p $DOCKERHUB
-								docker tag 3.220.243.252:8083/springapp:${DOCKER_TAG} kishanth1994/springapp:${DOCKER_TAG}
                                 docker push kishanth1994/springapp:${DOCKER_TAG}
-								docker rmi 3.220.243.252:8083/springapp:${DOCKER_TAG}
-								docker rmi kishanth1994/springapp:${DOCKER_TAG}
-								docker logout
+				docker rmi 3.220.243.252:8083/springapp:${DOCKER_TAG}
+				docker rmi kishanth1994/springapp:${DOCKER_TAG}
+				docker logout
                             '''
                     }
                 }
