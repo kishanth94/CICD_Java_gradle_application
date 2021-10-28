@@ -29,7 +29,7 @@ pipeline{
                 }
             }
         }
-        stage("docker build & docker push"){
+        stage("docker build & docker push to nexus"){
             steps{
                 script{
                     withCredentials([string(credentialsId: 'nexus_pass', variable: 'nexus_password')]) {
@@ -37,19 +37,23 @@ pipeline{
                                 docker build -t 3.220.243.252:8083/springapp:${DOCKER_TAG} .
                                 docker login -u admin -p $nexus_password 3.220.243.252:8083
                                 docker push 3.220.243.252:8083/springapp:${DOCKER_TAG}
-								docker logout
-                            '''
-				    }
-		    withDockerRegistry(credentialsId: 'DOCKERHUB', url: 'https://hub.docker.com') {
-                             sh '''
+				docker logout
+			    '''
+		    }
+		}
+	    }
+	}
+	stage("docker image push to dockerhub and remove the images locally"){
+            steps{
+                script{    
+	                     sh '''
 			        cat my_password.txt | docker login --username kishanth1994 --password-stdin
                                 docker push kishanth1994/springapp:${DOCKER_TAG}
 				docker rmi 3.220.243.252:8083/springapp:${DOCKER_TAG}
 				docker rmi kishanth1994/springapp:${DOCKER_TAG}
 				docker logout
                             '''
-                    }
-                }
+		}  
             }
         }
         stage("Identifying misconfigurations using datree in helm charts"){
