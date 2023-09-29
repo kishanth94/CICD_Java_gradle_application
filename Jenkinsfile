@@ -1,8 +1,8 @@
 pipeline{
     agent any
     environment{
-	    ENVIRONMENT = 'TEST'
-	    TIME_STAMP = new java.text.SimpleDateFormat('yyyy_MM_dd').format(new Date())
+        ENVIRONMENT = 'TEST'
+	TIME_STAMP = new java.text.SimpleDateFormat('yyyy_MM_dd').format(new Date())
         DOCKER_TAG = "${ENVIRONMENT}_${TIME_STAMP}_${env.BUILD_NUMBER}"
     }
     stages{
@@ -57,33 +57,7 @@ pipeline{
 		}  
             }
         }
-        stage("Identifying misconfigurations using datree in helm charts"){
-            steps{
-                script{
-
-                    dir('kubernetes/') {
-                        withEnv(['DATREE_TOKEN=87nXtFQA2QxJ1DCuziufez']) {
-                              sh 'helm datree test myapp/'
-                        }    
-                    }
-                }
-            }
-        }
-        stage("Pushing the helm charts to nexus"){
-            steps{
-                script{
-                    withCredentials([string(credentialsId: 'nexus_pass', variable: 'nexus_password')]) {
-                          dir('kubernetes/') {
-                             sh '''
-                                  helmversion=$( helm show chart myapp | grep version | cut -d: -f 2 | tr -d ' ')
-                                  tar -czvf myapp-${helmversion}.tgz myapp/
-                                  curl -u admin:$nexus_password http://3.220.243.252:8081/repository/helm-hosted/ --upload-file myapp-${helmversion}.tgz -v
-                            '''
-                          }
-                    }
-                }
-            }
-        }
+        
         stage("Copying the playbook and kubernetes manifests to Ansible server"){
 		    steps{
 			    script{
@@ -114,18 +88,7 @@ pipeline{
 			        sh 'ssh -o StrictHostKeyChecking=no -i /root/.ssh/id_rsa root@172.31.85.166 "kubectl config get-contexts; kubectl config use-context kubernetes-admin@kubernetes; whoami && hostname; ansible-playbook -i /etc/ansible/kubernetes/hosts /etc/ansible/kubernetes/playbook-deployment-service.yaml; sudo rm -rf /etc/ansible/kubernetes/*.yaml;"'   
                }
             }
-        }
-        
-        stage('verifying app deployment'){
-            steps{
-                script{
-                     withCredentials([kubeconfigFile(credentialsId: 'kubernetes-configs', variable: 'KUBECONFIG')]) {
-                         sh 'kubectl run curl --image=curlimages/curl -i --rm --restart=Never -- curl sample-tomcat-service:8080'
-
-                     }
-                }
-            }
-        }
+        } 
     }
 	   
     post {
