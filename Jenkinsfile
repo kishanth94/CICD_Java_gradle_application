@@ -2,7 +2,7 @@ pipeline{
     agent any
     environment{
         ENVIRONMENT = 'TEST'
-	TIME_STAMP = new java.text.SimpleDateFormat('yyyy_MM_dd').format(new Date())
+	    TIME_STAMP = new java.text.SimpleDateFormat('yyyy_MM_dd').format(new Date())
         DOCKER_TAG = "${ENVIRONMENT}_${TIME_STAMP}_${env.BUILD_NUMBER}"
     }
     stages{
@@ -37,7 +37,7 @@ pipeline{
                                 docker build -t 3.220.243.252:8083/springapp:${DOCKER_TAG} .
                                 docker login -u admin -p $nexus_password 3.220.243.252:8083
                                 docker push 3.220.243.252:8083/springapp:${DOCKER_TAG}
-				docker logout
+				                docker logout
 			    '''
 		    }
 		}
@@ -48,11 +48,11 @@ pipeline{
                 script{    
 	                     sh '''
 			        cat my_password.txt | docker login --username kishanth1994 --password-stdin
-				docker tag 3.220.243.252:8083/springapp:${DOCKER_TAG} kishanth1994/springapp:${DOCKER_TAG}
-                                docker push kishanth1994/springapp:${DOCKER_TAG}
-				docker rmi 3.220.243.252:8083/springapp:${DOCKER_TAG}
-				docker rmi kishanth1994/springapp:${DOCKER_TAG}
-				docker logout
+				    docker tag 3.220.243.252:8083/springapp:${DOCKER_TAG} kishanth1994/springapp:${DOCKER_TAG}
+                    docker push kishanth1994/springapp:${DOCKER_TAG}
+				    docker rmi 3.220.243.252:8083/springapp:${DOCKER_TAG}
+				    docker rmi kishanth1994/springapp:${DOCKER_TAG}
+				    docker logout
                             '''
 		}  
             }
@@ -75,7 +75,7 @@ pipeline{
             steps{
                 script{
                     timeout(10) {
-                        mail bcc: '', body: "<br>Project: ${env.JOB_NAME} <br>Build Number: ${env.BUILD_NUMBER} <br> Go to build url and approve the deployment request <br> URL of the build: ${env.BUILD_URL}", cc: '', charset: 'UTF-8', from: '', mimeType: 'text/html', replyTo: '', subject: "${currentBuild.result} CI: Project name -> ${env.JOB_NAME}", to: "devopsatitspeak@gmail.com";  
+                        mail bcc: '', body: "<br>Project: ${env.JOB_NAME} <br>Build Number: ${env.BUILD_NUMBER} <br> Go to build url and approve the deployment request <br> URL of the build: ${env.BUILD_URL}", cc: '', charset: 'UTF-8', from: '', mimeType: 'text/html', replyTo: '', subject: "${currentBuild.result} CI: Project name -> ${env.JOB_NAME}", to: "abc@gmail.com";  
                         input(id: "Deploy Gate", message: "Deploy ${params.project_name}?", ok: 'Deploy')
                     }
                 }
@@ -93,7 +93,7 @@ pipeline{
 	   
     post {
 		always {
-			mail bcc: '', body: "<br>Project: ${env.JOB_NAME} <br>Build Number: ${env.BUILD_NUMBER} <br> URL of the build: ${env.BUILD_URL}", cc: '', charset: 'UTF-8', from: '', mimeType: 'text/html', replyTo: '', subject: "${currentBuild.result} CI: Project name -> ${env.JOB_NAME}", to: "devopsatitspeak@gmail.com";  
+			mail bcc: '', body: "<br>Project: ${env.JOB_NAME} <br>Build Number: ${env.BUILD_NUMBER} <br> URL of the build: ${env.BUILD_URL}", cc: '', charset: 'UTF-8', from: '', mimeType: 'text/html', replyTo: '', subject: "${currentBuild.result} CI: Project name -> ${env.JOB_NAME}", to: "abc@gmail.com";  
 		 }
 	   }
 }
